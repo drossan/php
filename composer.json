@@ -1,0 +1,21 @@
+{
+    "name": "grdar/core",
+    "description": "Mini framework PHP",
+    "type": "library",
+    "license": "MIT",
+    "authors": [{
+        "name": "Team developer GRDAR",
+        "email": "dani@grdar.com"
+    }],
+    "minimum-stability": "stable",
+    "require-dev": {
+        "phpunit/phpunit": "^4.8",
+        "mockery/mockery": "^0.9.4"
+    },
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Grdar\\core\\": "src/"
+        }
+    }
+}
