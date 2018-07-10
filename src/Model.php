@@ -44,6 +44,23 @@ abstract class Model
         return $this;
     }
 
+    // Consultas bind
+	protected function bindQuery($query)
+    {
+		$this->database = new conection();
+        $this->database->query($query);
+    }
+
+    protected function bind($param, $value, $type = null)
+    {
+        $this->database->bind($param, $value, $type);
+    }
+
+    protected function execute()
+    {
+        $this->database->execute();
+    }
+
     // Cuenta los resultados devueltos en una query()
     public function rowCount()
     {
