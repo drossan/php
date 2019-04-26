@@ -1,7 +1,7 @@
 <?php 
-namespace Grdar\core\Translator;
+namespace Drossan\core\Translator;
 
-use Grdar\core\Model;
+use Drossan\core\Model;
 
 class Translator extends Model
 {

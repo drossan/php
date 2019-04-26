@@ -1,5 +1,5 @@
 <?php
-namespace Grdar\core\PHPMailer\extras;
+namespace Drossan\core\PHPMailer\extras;
 /*************************************************************************
  *                                                                       *
  * Converts HTML to formatted plain text                                 *

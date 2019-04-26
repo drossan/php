@@ -1,6 +1,6 @@
 <?php 
+namespace Drossan\core\PHPMailer;
 
-namespace Grdar\core\PHPMailer;
 use Exception;
 /**
  * PHPMailer exception handler

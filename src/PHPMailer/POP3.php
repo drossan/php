@@ -1,5 +1,5 @@
 <?php
-namespace Grdar\core\PHPMailer;
+namespace Drossan\core\PHPMailer;
 
 /**
  * PHPMailer POP-Before-SMTP Authentication Class.

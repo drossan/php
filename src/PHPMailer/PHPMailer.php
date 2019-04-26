@@ -1,7 +1,7 @@
 <?php
 
-namespace Grdar\core\PHPMailer;
-use Grdar\core\PHPMailer\SMTP;
+namespace Drossan\core\PHPMailer;
+use Drossan\core\PHPMailer\SMTP;
 
 /**
  * PHPMailer - PHP email creation and transport class.

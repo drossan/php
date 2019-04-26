@@ -1,5 +1,5 @@
 <?php
-namespace Grdar\core\PHPMailer;
+namespace Drossan\core\PHPMailer;
 use stdClass;
 use PHPMailer\extras\ntlm_sasl_client_class;
 /**

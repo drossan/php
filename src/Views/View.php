@@ -1,65 +1,28 @@
 <?php 
-namespace  Grdar\core\Views;
-use Grdar\core\Container;
+namespace Drossan\core\Views;
+
+use Twig\Loader\FilesystemLoader;
+use Twig\Environment;
+use Zend\Diactoros\Response\HtmlResponse;
 
 class View
 {
-    const INCLUDES  = PATH_INCLUDES;
-    const VIEWS     = PATH_VIEWS;
+    const PATH_VIEWS  = PATH_VIEWS;
+    const PATH_CACHE = PATH_CACHE;
 
-    private static $template;
-    private static $vars;
-    private static $templateContent;
+    private $templateEngine;
     
-
-    public function isArray()
+    public function __construct()
     {
-        if(is_array(self::$vars)){
-            return extract(self::$vars);
-        }
-        return get_object_vars(self::$vars);
+        $loader = new FilesystemLoader(self::PATH_VIEWS);
+        $this->templateEngine =  new Environment($loader, [
+            'debug' => true,
+            'cache' => self::PATH_CACHE,
+        ]);
     }
 
-    public static function getInstance()
+    public function renderHTML($fileName, $data = [])
     {
-        $container = Container::getInstance();
-        return get_object_vars($container);
-    }
-
-
-    public static function html()
-    {
-       
-        isset(self::$vars) ? $this->isArray() : false;
-        self::getInstance();
-        
-        ob_start();
-        echo '
-        <!doctype html>
-        <html lang="'.idioma(),'">';
-            require self::INCLUDES .'head.php';
-        echo '<body>'; 
-            require self::INCLUDES . 'header.php'; 
-            require self::VIEWS . self::$template . '.php';
-            require self::INCLUDES . 'footer.php'; 
-        echo '</body>
-        </html>';
-        
-        self::$templateContent = ob_get_clean();
-    }
-
-    public static function view($template, $vars = null)
-    {
-        self::$template = $template;
-        self::$vars     = $vars;
-        self::html();
-        return self::$templateContent;
-    }
-
-    public function abort404($message)
-    {
-        http_response_code(404);
-        view('404');
-        exit();
+        return new HtmlResponse($this->templateEngine->render($fileName, $data));
     }
 }

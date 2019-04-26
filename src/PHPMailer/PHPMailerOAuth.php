@@ -1,5 +1,5 @@
 <?php
-namespace Grdar\core\PHPMailer;
+namespace Drossan\core\PHPMailer;
 /**
  * PHPMailer - PHP email creation and transport class.
  * PHP Version 5.4

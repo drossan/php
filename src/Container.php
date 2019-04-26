@@ -1,6 +1,5 @@
 <?php
-
-namespace Grdar\core;
+namespace Drossan\core;
 
 use Closure;
 use InvalidArgumentException;
