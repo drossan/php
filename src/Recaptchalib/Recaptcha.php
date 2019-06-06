@@ -1,6 +1,6 @@
 <?php 
-namespace Grdar\core\Recaptchalib;
-use Grdar\core\Recaptchalib\Recaptcharesponse;
+namespace Drossan\core\Recaptchalib;
+use Drossan\core\Recaptchalib\Recaptcharesponse;
 
 class Recaptcha
 {

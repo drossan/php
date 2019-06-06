@@ -1,6 +1,5 @@
 <?php
-
-namespace  Grdar\core\Paths;
+namespace  Drossan\core\Paths;
 
 class Paths{
 

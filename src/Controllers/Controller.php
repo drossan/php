@@ -1,15 +1,13 @@
 <?php
-namespace Grdar\core\Controllers;
+namespace Drossan\core\Controllers;
 
-use Grdar\core\Container;
+use Drossan\core\Views\View;
 
-class Controller{
-
-	public static $container;
-
-	public static function getInstance($intance, $var)
-	{
-		self::$container = Container::getInstance();
-		self::$container->instance($intance, $var);
-	}
+class Controller extends View 
+{
+	public function notFound()
+    {
+        header("HTTP/1.0 404 Not Found");
+        return $this->renderHTML('404.twig');
+    }
 }

@@ -1,79 +1,96 @@
 <?php
-namespace  Grdar\core\Routes;
+namespace Drossan\core\Routes;
 
-use Grdar\core\Views\View;
-use Grdar\core\Routes\Route;
+use Aura\Router\RouterContainer;
+
+use WoohooLabs\Harmony\Harmony,
+	WoohooLabs\Harmony\Middleware\DispatcherMiddleware,
+	WoohooLabs\Harmony\Middleware\HttpHandlerRunnerMiddleware,
+	Zend\Diactoros\ServerRequestFactory,
+	Zend\Diactoros\Response,
+	Zend\HttpHandlerRunner\Emitter\SapiEmitter,
+	Middlewares\AuraRouter,
+	Drossan\core\Middlewares,
+	Drossan\core\Middlewares\Load,
+	Drossan\core\Container\Container;
 
 class Router {
 
-	protected $requestUri;
-	protected $routes;
-	const GET_PARAMS_DELIMITER = '?';
-	
-	public function setRequest($requestUri)
-	{
-		$this->routes = array();
-		$this->setRequestUri($requestUri);
-	}
-	
+    protected $container;
+    protected $request;
+    protected $routerContainer;
+    protected $map;
 
-	public function setRequestUri($requestUri)
+	public function __construct()
 	{
-		if (strpos($requestUri, self::GET_PARAMS_DELIMITER))
-		{
-			$requestUri = strstr($requestUri, self::GET_PARAMS_DELIMITER, true);
-		}
-		$this->requestUri = $requestUri;
+		$this->container = Container::getContainer();
+		$this->routerContainer = new RouterContainer();
+		$this->map = $this->routerContainer->getMap();
 	}
 
-	public function getRequestUri()
+	public function get($name, $uri, $controller, $method)
 	{
-		return $this->requestUri;
+		$this->map->get($name, $uri, [$controller, $method]);
 	}
 
-	public function add($uri, $closure)
+	public function patch($name, $uri, $controller, $method)
 	{
-		$route = new Route($uri, $closure);
-		array_push($this->routes, $route);
+		$this->map->patch($name, $uri, [$controller,$method]);
 	}
 
-	public function run()
+	public function post($name, $uri, $controller, $method)
 	{
-		$response = false;
-		$requestUri = $this->getRequestUri();
-		foreach ($this->routes as $route)
-		{
-			if ($route->checkIfMatch($requestUri))
-			{
-				$response = $route->execute();
-				// break para no seguir dando vueltas
-				// Ya se encontró la ruta correspondiente
-				break;
+		$this->map->post($name, $uri, [$controller,$method]);
+	}
+
+	public function delete($name, $uri, $controller, $method)
+	{
+		$this->map->delete($name, $uri, [$controller, $method]);
+	}
+
+	public function attach($namePrefix, $pathPrefix, $routes, $tokens = [])
+	{
+		$this->map->attach($namePrefix, $pathPrefix, function ($map) use($routes, $tokens) {
+			$this->map->tokens($tokens);
+			foreach ($routes as $key => $route) {
+				$this->{$route[0]}($route[1], $route[2], $route[3], $route[4]);
 			}
-		}
-		$this->sendResponse($response);
+		});
 	}
-	
-	public function sendResponse($response)
-	{
 
-		if (is_string($response))
-		{
-			echo $response;
-		}
-		else if (is_array($response))
-		{
-			echo json_encode($response);
-		}
-		else if ($response instanceof Response)
-		{
-			$response->execute();
-		}
-		else
-		{
-			header("HTTP/1.0 404 Not Found");
-			$_REQUEST['page'] = '404';
-			exit(View::view('404'));
+    public function run()
+	{
+        $this->request = ServerRequestFactory::fromGlobals($_SERVER, $_GET,$_POST, $_COOKIE, $_FILES);
+        $matcher = $this->routerContainer->getMatcher();
+		$route = $matcher->match($this->request);
+
+		try{
+			foreach ($route->attributes as $key => $val) {
+				$this->request = $this->request->withAttribute($key, $val);
+			}
+
+			$harmony = new Harmony($this->request, new Response());
+			$harmony->addMiddleware(new HttpHandlerRunnerMiddleware(new SapiEmitter()));
+
+			if (getenv('DEBUG') === "true") {
+				$harmony->addMiddleware(new \Franzl\Middleware\Whoops\WhoopsMiddleware);
+			}
+
+			$harmony->addMiddleware(new AuraRouter($this->routerContainer));
+			foreach (Load::getMiddleware() as $key => $value) {
+				$harmony->addMiddleware(new $value);
+			}
+
+			$harmony->addMiddleware(new DispatcherMiddleware($this->container, 'request-handler'));
+
+			$harmony();
+		} catch (Exception $e) {
+			$log->error($e->getMessage());
+			$emitter = new SapiEmitter();
+			$emitter->emit(new Response\EmptyResponse(500));
+		} catch (Error $e) {
+			$emitter = new SapiEmitter();
+			$emitter->emit(new Response\EmptyResponse(500));
 		}
 	}
 }
