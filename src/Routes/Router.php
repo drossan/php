@@ -11,7 +11,8 @@ use WoohooLabs\Harmony\Harmony,
 	Zend\HttpHandlerRunner\Emitter\SapiEmitter,
 	Middlewares\AuraRouter,
 	Drossan\core\Middlewares,
-	Drossan\core\Middlewares\Load;
+	Drossan\core\Middlewares\Load,
+	Drossan\core\Container\Container;
 
 class Router {
 
@@ -22,7 +23,7 @@ class Router {
 
 	public function __construct()
 	{
-        $this->container = new \DI\Container();
+		$this->container = Container::getContainer();
 		$this->routerContainer = new RouterContainer();
 		$this->map = $this->routerContainer->getMap();
 	}

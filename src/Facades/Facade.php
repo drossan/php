@@ -1,13 +1,11 @@
 <?php
-
 namespace  Drossan\core\Facades;
 
 use Exception;
-use  Drossan\core\Container;
+use Illuminate\Container\Container;
 
 abstract class Facade
 {
-
     protected static $container;
 
     public static function setContainer(Container $container)
@@ -27,7 +25,7 @@ abstract class Facade
 
     public static function getInstance()
     {
-        return static::getContainer()->make(static::getAccessor());
+        return static::getContainer()->get(static::getAccessor());
     }
 
     public static function __callStatic($method, $args)
@@ -46,5 +44,4 @@ abstract class Facade
                 return call_user_func_array(array($object, $method), $args);
         }
     }
-
 }

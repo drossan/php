@@ -27,7 +27,6 @@
         "franzl/whoops-middleware": "^1.1",
         "illuminate/database": "^5.6",
         "middlewares/aura-router": "^1.1",
-        "php-di/php-di": "^6.0",
         "respect/validation": "^1.1",
         "robmorgan/phinx": "^0.10.7",
         "twig/twig": "^2.5",
